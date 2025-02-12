@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build" # Command to build your app
+  publish = "dist"          # Directory containing the built app
+  functions = "netlify/functions" # Optional: For serverless functions support
+
+[[redirects]]
+  from = "/*"               # Redirect all routes
+  to = "/index.html"        # Let React Router handle routing (SPA)
+  status = 200
