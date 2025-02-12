@@ -7,8 +7,6 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<div>Login Page Placeholder</div>} />
-        <Route path="/signup" element={<div>Sign Up Page Placeholder</div>} />
       </Routes>
     </Router>
   );
