@@ -1,0 +1,89 @@
+/* LandingPage Styles */
+
+.landing-page {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
+
+.landing-header {
+  background-color: #1da1f2; /* Twitter-like blue */
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.landing-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.landing-header nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.hero-section {
+  padding: 40px;
+  background: linear-gradient(to bottom, #1ec8e1, #b8e3f7);
+}
+
+.hero-section h2 {
+  margin-bottom: 20px;
+  font-size: 36px;
+  color: #1da1f2;
+}
+
+.hero-section p {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.hero-section button {
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.hero-section button:hover {
+  background-color: #0c85d0;
+}
+
+.features-section {
+  padding: 20px;
+}
+
+.features-section h3 {
+  color: #1da1f2;
+}
+
+.features-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.features-section ul li {
+  background: #f5f8fa;
+  padding: 10px;
+  margin: 10px auto;
+  border-radius: 8px;
+  max-width: 400px;
+  border: 1px solid #ccc;
+}
+
+.landing-footer {
+  padding: 10px;
+  background-color: #1da1f2;
+  color: white;
+}
