@@ -1,0 +1,36 @@
+/* LandingPage Styles */
+
+.landing-page {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
+
+.landing-header {
+  background-color: #1da1f2; /* Twitter-like blue */
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.landing-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.landing-header nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.hero-section {
+  padding: 40px;
+  background: linear-gradient(to bottom, #1ec8e1, #b8e3f7);
+}
