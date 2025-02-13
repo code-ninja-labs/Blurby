@@ -1,22 +1,28 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // updated from useHistory
 import TopBar from "../components/TopBar";
 import BottomNavBar from "../components/BottomNavBar";
 
 const Home = () => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/login");
+      // Check for an active session
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        setUser(session.user); // Set the authenticated user
       } else {
-        setUser(user);
+        navigate("/login"); // Redirect to login if no session
       }
+      setLoading(false); // Stop loading after the check
     };
 
     fetchUser();
@@ -24,8 +30,12 @@ const Home = () => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    navigate("/login");
+    navigate("/login"); // Redirect to login on logout
   };
+
+  if (loading) {
+    return <p>Loading...</p>; // Show a loading screen while session is being checked
+  }
 
   return (
     <div style={styles.container}>
