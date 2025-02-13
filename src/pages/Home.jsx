@@ -1,28 +1,28 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // updated from useHistory
 
 const Home = () => {
-  const [user, setUser] = useState(null); // Holds the logged-in user's info
-  const history = useHistory();
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate(); // updated from useHistory
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        history.push("/login"); // Redirect to login if no user
+        navigate("/login"); // updated from history.push("/login")
       } else {
         setUser(user);
       }
     };
 
     fetchUser();
-  }, [history]);
+  }, [navigate]); // added navigate dependency
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    history.push("/login"); // Redirect to login after sign-out
+    navigate("/login"); // updated from history.push("/login")
   };
 
   return (
