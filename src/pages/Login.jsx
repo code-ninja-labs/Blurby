@@ -1,47 +1,39 @@
-// src/pages/Login.jsx
 import React, { useEffect, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useLocation, useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 const Login = () => {
-  const [session, setSession] = useState(null); // Holds the user session
-  const location = useLocation(); // Tracks where the user came from
-  const history = useHistory();
+  const [session, setSession] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate(); // React Router navigation hook
 
   useEffect(() => {
     const handleSession = async () => {
-      // Check for an active session
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
 
       if (session) {
-        // Redirect to the intended page or to /home by default
-        history.push(location.state?.from?.pathname || "/home");
+        navigate(location.state?.from?.pathname || "/home"); // Redirect user
       }
     };
 
     handleSession();
 
-    // Listen for Supabase authentication changes
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
         if (session) {
-          // Redirect after login
-          history.push(location.state?.from?.pathname || "/home");
+          navigate(location.state?.from?.pathname || "/home"); // Redirect after login
         }
       }
     );
 
-    return () => {
-      subscription.unsubscribe(); // Cleanup listener on unmount
-    };
-  }, [history, location.state]);
+    return () => subscription.unsubscribe();
+  }, [navigate, location.state]);
 
   if (session) {
-    // Display a loading or success message while redirecting
     return <div>Redirecting...</div>;
   }
 
