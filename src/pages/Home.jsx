@@ -1,18 +1,18 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { useNavigate } from "react-router-dom"; // Updated navigation hook for v6+
+import { useNavigate } from "react-router-dom";
 import CreatePost from "../components/CreatePost";
+import Feed from "../components/Feed";
 
 const Home = () => {
   const [user, setUser] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
-  const [posts, setPosts] = useState([]); // State for posts
-  const [loadingPosts, setLoadingPosts] = useState(true); // Loading state for feed
-  const [showCreatePost, setShowCreatePost] = useState(false); // Display form to create post
+  const [loadingUser, setLoadingUser] = useState(true); // Handles user session loading
+  const [showCreatePost, setShowCreatePost] = useState(false); // State for the "Create Post" form
+
   const navigate = useNavigate();
 
-  // **1. Authenticate and fetch user**
+  // **Authenticate and Fetch User**
   useEffect(() => {
     const fetchUser = async () => {
       const {
@@ -30,41 +30,14 @@ const Home = () => {
     fetchUser();
   }, [navigate]);
 
-  // **2. Fetch posts from the database**
-  const fetchPosts = async () => {
-    setLoadingPosts(true);
-    const { data, error } = await supabase
-      .from("posts")
-      .select(
-        `
-        id, content, like_count, comment_count, created_at,
-        profiles(username, profile_picture)
-      `
-      )
-      .order("created_at", { ascending: false }); // Latest posts first
-
-    if (error) {
-      console.error("Error fetching posts:", error.message);
-    } else {
-      setPosts(data || []); // Store posts in state or empty array
-    }
-    setLoadingPosts(false);
-  };
-
-  // **Fetch posts on component mount**
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  // **3. Handle post creation success to refresh feed**
+  // **Handle Post Created: Callback to Refresh Feed**
   const handlePostCreated = () => {
-    fetchPosts(); // Refresh posts after a new one is created
     setShowCreatePost(false); // Close the create post form
   };
 
-  // **4. Render loading screen, user data, and feed**
+  // **Render loading indicator while session is checked**
   if (loadingUser) {
-    return <div>Loading...</div>; // Show while user session is being confirmed
+    return <div>Loading...</div>;
   }
 
   return (
@@ -94,37 +67,11 @@ const Home = () => {
       )}
 
       {/* Feed */}
-      <div style={styles.feed}>
-        {loadingPosts ? (
-          <p>Loading posts...</p>
-        ) : posts.length > 0 ? (
-          posts.map((post) => (
-            <div key={post.id} style={styles.post}>
-              <div style={styles.profile}>
-                <img
-                  src={post.profiles?.profile_picture || "/default-avatar.png"}
-                  alt="User Logo"
-                  style={styles.profilePicture}
-                />
-                <span>{post.profiles?.username || "Unknown User"}</span>
-              </div>
-              <p style={styles.content}>{post.content}</p>
-              <div style={styles.meta}>
-                <span>Likes: {post.like_count}</span>
-                <span>Comments: {post.comment_count}</span>
-                <span>{new Date(post.created_at).toLocaleString()}</span>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No posts available.</p>
-        )}
-      </div>
+      <Feed />
     </div>
   );
 };
 
-// **CSS Styles**
 const styles = {
   container: {
     maxWidth: "600px",
@@ -150,34 +97,6 @@ const styles = {
   createPostContainer: {
     marginBottom: "20px",
   },
-  feed: {
-    marginTop: "20px",
-  },
-  post: {
-    border: "1px solid #ddd",
-    borderRadius: "5px",
-    padding: "10px",
-    marginBottom: "20px",
-  },
-  profile: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  profilePicture: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-  },
-  content: {
-    fontSize: "16px",
-    margin: "10px 0",
-  },
-  meta: {
-    fontSize: "14px",
-    color: "#555",
-  },
 };
 
 export default Home;
-                
