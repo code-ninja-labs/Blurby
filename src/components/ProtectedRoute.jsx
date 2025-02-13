@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
-const ProtectedRoute = ({ redirectPath = "/login" }) => {
+const ProtectedRoute = ({ redirectPath = "/landing" }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Check for authenticated user
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -16,10 +17,12 @@ const ProtectedRoute = ({ redirectPath = "/login" }) => {
     getUser();
   }, []);
 
+  // Show loading while fetching user information
   if (loading) {
-    return <div>Loading...</div>; // Show a loading indicator
+    return <div>Loading...</div>;
   }
 
+  // Redirect to the landing page or the specified path if not authenticated
   return user ? <Outlet /> : <Navigate to={redirectPath} />;
 };
 
