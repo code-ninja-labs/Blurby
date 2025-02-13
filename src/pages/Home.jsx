@@ -3,49 +3,51 @@ import { supabase } from "../supabaseClient";
 
 const Home = () => {
   const [user, setUser] = useState(null); // Stores authenticated user
-  const [loading, setLoading] = useState(true); // Tracks session loading
+  const [loading, setLoading] = useState(true); // Tracks loading state
 
+  // Fetch the Supabase session on mount
   useEffect(() => {
     const fetchSession = async () => {
-      setLoading(true); // Set loading state to true
+      setLoading(true); // Start loading
       try {
-        const { data: session, error } = await supabase.auth.getSession();
+        const { data: session, error } = await supabase.auth.getSession(); // Fetch session from Supabase
 
         if (error) {
           console.error("Error fetching session:", error.message);
         }
 
         if (session?.user) {
-          console.log("Authenticated user:", session.user); // Log authenticated user
-          setUser(session.user); // Update `user` state with authenticated user
+          console.log("Authenticated user session found:", session.user); // Log authenticated user
+          setUser(session.user); // Update user state
         } else {
-          console.log("No user session found.");
-          setUser(null); // Explicitly set `user` to `null` for unauthenticated users
+          console.log("No user session detected.");
         }
       } catch (err) {
-        console.error("Session fetch error:", err.message);
+        console.error("Error in fetchSession:", err.message);
       } finally {
-        setLoading(false); // Ensure loading state is set to false
+        setLoading(false); // Stop loading after session check
       }
     };
 
     fetchSession();
   }, []);
 
-  /** Debugging State at Each Step */
-  console.log("Home Component States - loading:", loading, "user:", user);
+  // Logging for debugging
+  console.log({ loading, user }); // Log state values for loading and user
 
   if (loading) {
-    return <p>Loading...</p>; // Loading indicator
-  }
-  if (!user) {
-    return <p>No user logged in. Please sign in.</p>; // Placeholder for unauthenticated users
+    return <p>Loading...</p>;
   }
 
+  if (!user) {
+    return <p>No user session found. Please log in.</p>;
+  }
+
+  // If authenticated
   return (
     <div>
-      <h2>Welcome, {user.email}!</h2> {/* Dynamic user email */}
-      <p>Here is the Home Page content!</p>
+      <h1>Welcome, {user.email}</h1>
+      <p>This is the Home Page!</p>
     </div>
   );
 };
