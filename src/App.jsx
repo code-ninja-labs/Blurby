@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import MailConfirmed from "./pages/MailConfirmed";
 
 const App = () => {
   return (
@@ -14,7 +15,8 @@ const App = () => {
         {/* Protected route requires authentication */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />}
+           <Route path="/mail-confirmed" element={<MailConfirmed />} /> 
         </Route>
       </Routes>
     </Router>
