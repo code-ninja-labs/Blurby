@@ -1,74 +1,64 @@
-// src/components/CreatePost.jsx
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 
-const CreatePost = ({ user }) => {
+const CreatePost = ({ onPostCreated }) => {
   const [content, setContent] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const createPost = async () => {
     if (!content.trim()) {
-      alert("Post cannot be empty!");
+      setError("Post content cannot be empty.");
       return;
     }
 
-    // Insert into the posts table
-    const { error } = await supabase
-      .from("posts")
-      .insert([
-        {
-          user_id: user.id, // Supabase Auth User ID
-          content, // Blurb content
-        },
-      ]);
+    try {
+      // Replace 'posts' with your actual Supabase table name
+      const { data, error } = await supabase
+        .from("posts") // Ensure this is your table name
+        .insert([{ content }]); // Insert the post data to the database
 
-    if (error) {
-      console.error("Error creating post:", error);
-      alert("Error creating post! Please try again.");
-    } else {
-      setContent(""); // Clear input field
-      alert("Post created successfully!");
+      if (error) {
+        console.error("Error inserting post:", error);
+        setError("Failed to create post. Please try again.");
+        return;
+      }
+
+      console.log("Post created successfully:", data);
+      setContent(""); // Clear the input field
+      setError(""); // Clear any previous errors
+      onPostCreated(); // Trigger callback to refresh posts in the Feed
+    } catch (err) {
+      console.error("Unexpected error:", err.message);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
+    <div style={{ padding: "10px", background: "#f9f9f9", borderRadius: "5px" }}>
       <textarea
-        placeholder="Write something..."
+        rows="4"
+        placeholder="Write your post here..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        style={styles.textarea}
-      />
-      <button type="submit" style={styles.button}>
+        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+      ></textarea>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <button
+        onClick={createPost}
+        style={{
+          padding: "10px 20px",
+          background: "#007bff",
+          color: "#fff",
+          border: "none",
+          cursor: "pointer",
+          fontSize: "14px",
+          borderRadius: "5px"
+        }}
+      >
         Post
       </button>
-    </form>
+    </div>
   );
-};
-
-const styles = {
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  textarea: {
-    width: "100%",
-    height: "100px",
-    resize: "none",
-    padding: "10px",
-    fontSize: "14px",
-  },
-  button: {
-    padding: "10px",
-    border: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    fontSize: "14px",
-    cursor: "pointer",
-  },
 };
 
 export default CreatePost;
