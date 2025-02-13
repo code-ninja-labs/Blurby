@@ -1,15 +1,23 @@
 import React from "react";
-import './LandingPage.css'; // Import specific styles
+import { useHistory } from "react-router-dom"; // For navigation
+import "./LandingPage.css"; // Import specific styles
 
 const LandingPage = () => {
+  const history = useHistory(); // React Router History for navigation
+
+  // Navigation handlers
+  const handleLogin = () => history.push("/login");
+  const handleSignup = () => history.push("/login"); // Navigate to Login for simplicity
+  const handleGetStarted = () => history.push("/login");
+
   return (
     <div className="landing-page">
       {/* Navbar */}
       <header className="landing-header">
         <h1>Blurry</h1>
         <nav>
-          <a href="/login">Login</a>
-          <a href="/signup">Sign Up</a>
+          <button onClick={handleLogin} className="auth-button">Login</button>
+          <button onClick={handleSignup} className="auth-button">Sign Up</button>
         </nav>
       </header>
 
@@ -17,7 +25,7 @@ const LandingPage = () => {
       <section className="hero-section">
         <h2>Welcome to Blurry</h2>
         <p>Your favorite place to share thoughts, moments, and connect with others in blurry ways!</p>
-        <button onClick={() => window.location.href = "/signup"}>Get Started</button>
+        <button onClick={handleGetStarted} className="hero-button">Get Started</button>
       </section>
 
       {/* Features Section */}
