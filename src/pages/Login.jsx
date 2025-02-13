@@ -1,71 +1,59 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
+// src/pages/Login.jsx
+import React, { useEffect, useState } from "react";
+import { useLocation, useHistory } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 
-// Initialize Supabase Client
-const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_ANON_KEY
-);
-
 const Login = () => {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState(null); // Holds the user session
+  const location = useLocation(); // Tracks where the user came from
   const history = useHistory();
 
   useEffect(() => {
-    // Check for an active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const handleSession = async () => {
+      // Check for an active session
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
-    });
 
-    // Listen for login or logout events
+      if (session) {
+        // Redirect to the intended page or to /home by default
+        history.push(location.state?.from?.pathname || "/home");
+      }
+    };
+
+    handleSession();
+
+    // Listen for Supabase authentication changes
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+        if (session) {
+          // Redirect after login
+          history.push(location.state?.from?.pathname || "/home");
+        }
       }
     );
 
-    return () => subscription.unsubscribe(); // Cleanup subscription on unmount
-  }, []);
+    return () => {
+      subscription.unsubscribe(); // Cleanup listener on unmount
+    };
+  }, [history, location.state]);
 
-  if (!session) {
-    // If the user is not logged in, show the Supabase Auth interface
-    return (
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          providers={["google", "facebook", "github"]}
-        />
-      </div>
-    );
-  } else {
-    // If the user is logged in, redirect them or show a logged-in view
-    return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "20px",
-        }}
-      >
-        <h2>Welcome to Blurry!</h2>
-        <p>You are logged in as {session.user.email}</p>
-        <button onClick={() => supabase.auth.signOut()}>Sign Out</button>
-        <br />
-        <button onClick={() => history.push("/")}>Go to Home</button>
-      </div>
-    );
+  if (session) {
+    // Display a loading or success message while redirecting
+    return <div>Redirecting...</div>;
   }
+
+  return (
+    <div style={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Auth
+        supabaseClient={supabase}
+        appearance={{ theme: ThemeSupa }}
+        providers={["google", "facebook", "github"]}
+      />
+    </div>
+  );
 };
 
 export default Login;
