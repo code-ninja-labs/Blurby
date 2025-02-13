@@ -1,17 +1,11 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  build: {
-    rollupOptions: {
-      external: ['utils'],
-      output: {
-        globals: {
-          utils: 'utils', // Use the global name "utils"
-        },
-      },
+  resolve: {
+    alias: {
+      '@': '/src', // Allows importing files like "@/pages/Dashboard"
     },
   },
 });
