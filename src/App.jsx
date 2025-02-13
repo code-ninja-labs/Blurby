@@ -1,7 +1,5 @@
-// src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/landingpage/LandingPage";
 import Home from "./pages/Home";
@@ -14,18 +12,18 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/landing" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/mail-confirmed" element={<MailConfirmed />} />
+        <Route path="/landing" element={<div>Landing Page</div>} />
+        <Route path="/login" element={<div>Login Page</div>} />
+        <Route path="/mail-confirmed" element={<div>Mail Confirmed Page</div>} />
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute redirectPath="/landing" />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<div>Home Page Placeholder</div>} />
+          <Route path="/dashboard" element={<div>Dashboard Page Placeholder</div>} />
         </Route>
 
         {/* Redirect all other routes to landing */}
-        <Route path="*" element={<LandingPage />} />
+        <Route path="*" element={<div>404: Redirected to Landing</div>} />
       </Routes>
     </Router>
   );
