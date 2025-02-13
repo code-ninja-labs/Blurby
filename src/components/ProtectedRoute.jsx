@@ -1,47 +1,26 @@
 // src/components/ProtectedRoute.jsx
 import React, { useEffect, useState } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const ProtectedRoute = ({ redirectPath = "/login" }) => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if the user is authenticated
-    const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
       setLoading(false);
     };
-
-    checkAuth();
+    getUser();
   }, []);
 
   if (loading) {
-    // Show a loading spinner or placeholder while the check happens
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Show a loading indicator
   }
 
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        isAuthenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to="/login" /> // Redirect unauthenticated users to login
-        )
-      }
-    />
-  );
+  return user ? <Outlet /> : <Navigate to={redirectPath} />;
 };
 
 export default ProtectedRoute;
