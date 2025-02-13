@@ -1,29 +1,22 @@
-// src/App.jsx
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import LandingPage from "./pages/landingpage/LandingPage";
-import Login from "./pages/Login";
-import Home from "./pages/Home"; // Example protected page
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
     <Router>
-      <Switch>
-        {/* Public routes */}
-        <Route exact path="/" component={LandingPage} />
-        <Route path="/login" component={Login} />
-
-        {/* Protected routes */}
-        <ProtectedRoute path="/home" component={Home} />
-
-        {/* Add more protected routes here */}
-        {/* For example: <ProtectedRoute path="/profile" component={Profile} /> */}
-        {/* <ProtectedRoute path="/dashboard" component={Dashboard} /> */}
-
-        {/* Catch-all route */}
-        <Route path="*" component={() => <h1>404 - Not Found</h1>} />
-      </Switch>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected route requires authentication */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+      </Routes>
     </Router>
   );
 };
